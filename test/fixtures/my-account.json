@@ -1,0 +1,14 @@
+{
+  "status": 200,
+  "data": {
+    "_id":"5a665c1aa2f422661b46e5c2",
+    "created_at":"2018-01-22T15:48:10-06:00",
+    "updated_at":"2018-01-22T18:58:52-06:00",
+    "name":"Max Mustermann",
+    "email":"max.mustermann@gmail.com",
+    "locale":"en",
+    "api_key":"bcc74aeff61f5c6735884a51024db81c882b6ed4",
+    "super_admin":false,
+    "local_admin":true
+  }
+}
