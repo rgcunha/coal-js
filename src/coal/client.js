@@ -1,14 +1,47 @@
 import axios from 'axios';
+import { RawClient } from './raw-client';
+import { Connection } from './connection';
 
 export class Client {
   constructor({baseUrl, email, apiKey, httpClient = null}) {
-    this.baseUrl = baseUrl;
-    this.email = email;
-    this.apiKey = apiKey;
-    this.httpClient = httpClient ? httpClient : this.buildHttpClient(baseUrl);
+    this._baseUrl = baseUrl;
+    this._email = email;
+    this._apiKey = apiKey;
+    this._httpClient = httpClient ? httpClient : this._buildHttpClient(baseUrl);
+    this._rawClient = new RawClient({
+      baseUrl,
+      httpClient: this._httpClient
+    });
+    this._connection = null;
   }
 
-  buildHttpClient(baseUrl) {
+  createToken() {
+    const { _email, _apiKey } = this;
+    const data = { email: _email, api_key: _apiKey };
+    return this._create("tokens", data)
+  }
+
+  getMyAccount() {
+    return this._getConnection()
+      .then((connection) => this._get("my_account", connection));
+  }
+
+  getSites() {
+    return this._getConnection()
+      .then((connection) => this._get("sites", connection));
+  }
+
+  getCurrentSite() {
+    return this._getConnection()
+      .then((connection) => this._get("current_site", connection));
+  }
+
+  getContentEntries() {
+    return this._getConnection()
+      .then((connection) => this._get("content_entries", connection));
+  }
+
+  _buildHttpClient(baseUrl) {
     return axios.create({
       baseURL: baseUrl,
       timeout: 2000,
@@ -16,29 +49,31 @@ export class Client {
     });
   }
 
-  buildUrl(resourceType, id = null) {
-    let url = `${this.baseUrl}/${resourceType}.json`;
-    if (id) { url +=`/${id}` }
-    return url;
+  _get(resourceType, connection = null) {
+    const path = this._buildPath(resourceType);
+    return this._rawClient.get(path, connection);
   }
 
-  get(resourceType, id = null) {
-    const url = this.buildUrl(resourceType, id);
-    return this.httpClient.get(url);
+  _create(resourceType, data, connection = null) {
+    const path = this._buildPath(resourceType);
+    return this._rawClient.create(path, data, connection);
   }
 
-  create(resourceType, data) {
-    const url = this.buildUrl(resourceType);
-    return this.httpClient.post(url, data);
+  _buildPath(resourceType, id = null) {
+    let path = `${resourceType}.json`;
+    if (id) { path +=`/${id}` }
+    return path;
   }
 
-  getContentEntries() {
-    return this.get("content_entries");
+  _getConnection() {
+    if (this._connection) {
+      return new Promise((resolve) => resolve(this._connection));
+    }
+    return this._resetConnection();
   }
 
-  createToken() {
-    const { email, apiKey } = this;
-    const data = { email, api_key: apiKey };
-    return this.create("tokens", data);
+  _resetConnection() {
+    return this.createToken()
+      .then(({data}) => this._connection = new Connection({email: this._email, token: data.token}));
   }
 }
