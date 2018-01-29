@@ -1,5 +1,5 @@
 # Coal-js
-
+![](fire.jpg)
 The JavaScript API Client for LocomotiveCMS V3 (WIP).
 
 ## Installation
