@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 import axios from 'axios';
 import { Client } from './client';
-import tokensResponse from '../../test/fixtures/tokens';
+import { tokens, myAccount, sites } from '../../test/fixtures';
 
 describe('Client', () => {
   const httpClient = axios.create();
@@ -21,7 +21,7 @@ describe('Client', () => {
 
   describe('createToken()', () => {
     it('returns new token', (done) => {
-      const resolved = new Promise((resolve) => resolve(tokensResponse));
+      const resolved = new Promise((resolve) => resolve(tokens));
       sandbox.stub(httpClient, 'post').returns(resolved);
 
       client.createToken()
@@ -31,6 +31,46 @@ describe('Client', () => {
           expect(data.token).to.equal('K9zm8niKTxuM4ZMNK7Ct');
         })
         .then(done, done)
+    });
+  });
+
+  describe('protected resources', () => {
+    beforeEach(() => {
+      const resolved = new Promise((resolve) => resolve(tokens));
+      sandbox.stub(client, 'createToken').returns(resolved);
+    })
+
+    describe('getMyAccount()', () => {
+      it('returns the user account', (done) => {
+        const resolved = new Promise((resolve) => resolve(myAccount));
+        sandbox.stub(httpClient, 'get').returns(resolved);
+
+        client.getMyAccount()
+          .then((response) => {
+            const { status, data } = response;
+            expect(status).to.equal(200);
+            expect(data.email).to.equal('max.mustermann@gmail.com');
+            expect(data.name).to.equal('Max Mustermann');
+          })
+          .then(done, done)
+      });
+    });
+
+    describe('getSites()', () => {
+      it('returns all the user sites', (done) => {
+        const resolved = new Promise((resolve) => resolve(sites));
+        sandbox.stub(httpClient, 'get').returns(resolved);
+
+        client.getSites()
+          .then((response) => {
+            const { status, data } = response;
+            expect(status).to.equal(200);
+            expect(data).to.be.an("array");
+            expect(data[0].name).to.equal('My Site');
+            expect(data[0].handle).to.equal('thriving-leaves-5509');
+          })
+          .then(done, done)
+      });
     });
   });
 });

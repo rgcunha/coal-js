@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "The JavaScript API Client for LocomotiveCMS V3 (WIP)",
   "main": "dist/index.js",
+  "engines": {
+    "node": "8.9.4"
+  },
   "scripts": {
     "start": "npm run dev",
     "dev": "npm test -- -w",
@@ -12,7 +15,9 @@
     "build": "babel ./src -d ./dist --ignore test.js",
     "pretest": "npm run build",
     "test": "mocha --compilers js:babel-core/register ./src/**/*.test.js",
-    "test:single": "mocha --compilers js:babel-core/register"
+    "test:single": "mocha --compilers js:babel-core/register",
+    "debug": "mocha --inspect-brk --compilers js:babel-core/register ./src/**/*.test.js",
+    "debug:single": "mocha --inspect-brk --compilers js:babel-core/register"
   },
   "author": "Ruben Cunha",
   "devDependencies": {
