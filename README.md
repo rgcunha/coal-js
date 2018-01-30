@@ -26,6 +26,13 @@ client.getMyAccount()
 // get site name
 client.getSites()
   .then(({data}) => console.log(data[0].name))
+
+// scope resources by site
+client.scopedBySite('site-handle');
+
+// get currentSite
+client.getCurrentSite()
+  .then(({data}) => console.log(data.handle))
 ```
 
 ## NPM Scripts
@@ -57,6 +64,7 @@ npm run build
 * [x] GET /sites.json
 * [ ] POST /sites.json
 * [ ] DELETE /sites.json/{id}
+* [x] GET /current_site.json
 * [ ] GET /pages.json
 * [ ] GET /pages.json/{id}
 * [ ] POST /pages.json

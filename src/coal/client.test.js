@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 import axios from 'axios';
 import { Client } from './client';
-import { tokens, myAccount, sites } from '../../test/fixtures';
+import { tokens, myAccount, sites, currentSite } from '../../test/fixtures';
 
 describe('Client', () => {
   const httpClient = axios.create();
@@ -16,7 +16,6 @@ describe('Client', () => {
   let sandbox;
 
   beforeEach(() => sandbox = sinon.sandbox.create());
-
   afterEach(() => sandbox.restore());
 
   describe('createToken()', () => {
@@ -57,7 +56,7 @@ describe('Client', () => {
     });
 
     describe('getSites()', () => {
-      it('returns all the user sites', (done) => {
+      it('returns all sites', (done) => {
         const resolved = new Promise((resolve) => resolve(sites));
         sandbox.stub(httpClient, 'get').returns(resolved);
 
@@ -70,6 +69,26 @@ describe('Client', () => {
             expect(data[0].handle).to.equal('thriving-leaves-5509');
           })
           .then(done, done)
+      });
+    });
+
+    describe('scoped by a site handle', () => {
+      beforeEach(() => client.scopedBySite('thriving-leaves-5509'));
+
+      describe('getCurrentSite()', () => {
+        it('returns the current site', (done) => {
+          const resolved = new Promise((resolve) => resolve(currentSite));
+          sandbox.stub(httpClient, 'get').returns(resolved);
+
+          client.getCurrentSite()
+            .then((response) => {
+              const { status, data } = response;
+              expect(status).to.equal(200);
+              expect(data.name).to.equal('My Site');
+              expect(data.handle).to.equal('thriving-leaves-5509');
+            })
+            .then(done, done)
+        });
       });
     });
   });
