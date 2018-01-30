@@ -13,6 +13,15 @@ export class Client {
       httpClient: this._httpClient
     });
     this._connection = null;
+    this._siteHandle = null;
+  }
+
+  scopedBySite(siteHandle) {
+    this._siteHandle = siteHandle;
+    if (this._connection) {
+      this._connection.handle = siteHandle;
+    }
+    return this;
   }
 
   createToken() {
@@ -69,11 +78,15 @@ export class Client {
     if (this._connection) {
       return new Promise((resolve) => resolve(this._connection));
     }
-    return this._resetConnection();
+    return this._createConnection();
   }
 
-  _resetConnection() {
+  _createConnection() {
     return this.createToken()
-      .then(({data}) => this._connection = new Connection({email: this._email, token: data.token}));
+      .then(({data}) => this._connection = new Connection({
+        email: this._email,
+        token: data.token,
+        handle: this._siteHandle
+      }));
   }
 }

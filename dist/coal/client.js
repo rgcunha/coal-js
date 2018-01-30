@@ -38,9 +38,19 @@ var Client = exports.Client = function () {
       httpClient: this._httpClient
     });
     this._connection = null;
+    this._siteHandle = null;
   }
 
   _createClass(Client, [{
+    key: 'scopedBySite',
+    value: function scopedBySite(siteHandle) {
+      this._siteHandle = siteHandle;
+      if (this._connection) {
+        this._connection.handle = siteHandle;
+      }
+      return this;
+    }
+  }, {
     key: 'createToken',
     value: function createToken() {
       var _email = this._email,
@@ -131,16 +141,20 @@ var Client = exports.Client = function () {
           return resolve(_this5._connection);
         });
       }
-      return this._resetConnection();
+      return this._createConnection();
     }
   }, {
-    key: '_resetConnection',
-    value: function _resetConnection() {
+    key: '_createConnection',
+    value: function _createConnection() {
       var _this6 = this;
 
       return this.createToken().then(function (_ref2) {
         var data = _ref2.data;
-        return _this6._connection = new _connection.Connection({ email: _this6._email, token: data.token });
+        return _this6._connection = new _connection.Connection({
+          email: _this6._email,
+          token: data.token,
+          handle: _this6._siteHandle
+        });
       });
     }
   }]);
