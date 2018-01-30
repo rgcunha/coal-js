@@ -1,6 +1,6 @@
 {
   "name": "coal-js",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "The JavaScript API Client for LocomotiveCMS V3 (WIP)",
   "main": "dist/index.js",
   "engines": {
