@@ -15,6 +15,8 @@ var _rawClient = require('./raw-client');
 
 var _connection = require('./connection');
 
+var _errors = require('./errors');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -22,6 +24,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var Client = exports.Client = function () {
   function Client(_ref) {
     var baseUrl = _ref.baseUrl,
+        _ref$basicAuth = _ref.basicAuth,
+        basicAuth = _ref$basicAuth === undefined ? null : _ref$basicAuth,
         email = _ref.email,
         apiKey = _ref.apiKey,
         _ref$httpClient = _ref.httpClient,
@@ -32,7 +36,7 @@ var Client = exports.Client = function () {
     this._baseUrl = baseUrl;
     this._email = email;
     this._apiKey = apiKey;
-    this._httpClient = httpClient ? httpClient : this._buildHttpClient(baseUrl);
+    this._httpClient = httpClient ? httpClient : this._buildHttpClient({ baseUrl: baseUrl, basicAuth: basicAuth });
     this._rawClient = new _rawClient.RawClient({
       baseUrl: baseUrl,
       httpClient: this._httpClient
@@ -60,49 +64,77 @@ var Client = exports.Client = function () {
       return this._create("tokens", data);
     }
   }, {
-    key: 'getMyAccount',
-    value: function getMyAccount() {
+    key: 'getEngineVersion',
+    value: function getEngineVersion() {
       var _this = this;
 
       return this._getConnection().then(function (connection) {
-        return _this._get("my_account", connection);
+        return _this._get("version", connection);
+      });
+    }
+  }, {
+    key: 'getMyAccount',
+    value: function getMyAccount() {
+      var _this2 = this;
+
+      return this._getConnection().then(function (connection) {
+        return _this2._get("my_account", connection);
       });
     }
   }, {
     key: 'getSites',
     value: function getSites() {
-      var _this2 = this;
+      var _this3 = this;
 
       return this._getConnection().then(function (connection) {
-        return _this2._get("sites", connection);
+        return _this3._get("sites", connection);
       });
     }
   }, {
     key: 'getCurrentSite',
     value: function getCurrentSite() {
-      var _this3 = this;
-
-      return this._getConnection().then(function (connection) {
-        return _this3._get("current_site", connection);
-      });
-    }
-  }, {
-    key: 'getContentEntries',
-    value: function getContentEntries() {
       var _this4 = this;
 
       return this._getConnection().then(function (connection) {
-        return _this4._get("content_entries", connection);
+        return _this4._get("current_site", connection);
+      });
+    }
+  }, {
+    key: 'getContentTypes',
+    value: function getContentTypes() {
+      var _this5 = this;
+
+      return this._getConnection().then(function (connection) {
+        return _this5._get("content_types", connection);
+      });
+    }
+  }, {
+    key: 'getContentTypeEntries',
+    value: function getContentTypeEntries(contentType) {
+      var _this6 = this;
+
+      if (!contentType) {
+        throw new _errors.ArgumentError("content type must be a string");
+      }
+      var resourceType = 'content_types/' + contentType + '/entries';
+      return this._getConnection().then(function (connection) {
+        return _this6._get(resourceType, connection);
       });
     }
   }, {
     key: '_buildHttpClient',
-    value: function _buildHttpClient(baseUrl) {
-      return _axios2.default.create({
+    value: function _buildHttpClient(_ref2) {
+      var baseUrl = _ref2.baseUrl,
+          _ref2$basicAuth = _ref2.basicAuth,
+          basicAuth = _ref2$basicAuth === undefined ? null : _ref2$basicAuth;
+
+      var config = {
         baseURL: baseUrl,
         timeout: 2000,
+        auth: basicAuth,
         headers: { 'Content-Type': 'application/json' }
-      });
+      };
+      return _axios2.default.create(config);
     }
   }, {
     key: '_get',
@@ -134,11 +166,11 @@ var Client = exports.Client = function () {
   }, {
     key: '_getConnection',
     value: function _getConnection() {
-      var _this5 = this;
+      var _this7 = this;
 
       if (this._connection) {
         return new Promise(function (resolve) {
-          return resolve(_this5._connection);
+          return resolve(_this7._connection);
         });
       }
       return this._createConnection();
@@ -146,14 +178,14 @@ var Client = exports.Client = function () {
   }, {
     key: '_createConnection',
     value: function _createConnection() {
-      var _this6 = this;
+      var _this8 = this;
 
-      return this.createToken().then(function (_ref2) {
-        var data = _ref2.data;
-        return _this6._connection = new _connection.Connection({
-          email: _this6._email,
+      return this.createToken().then(function (_ref3) {
+        var data = _ref3.data;
+        return _this8._connection = new _connection.Connection({
+          email: _this8._email,
           token: data.token,
-          handle: _this6._siteHandle
+          handle: _this8._siteHandle
         });
       });
     }
