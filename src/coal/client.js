@@ -1,13 +1,14 @@
 import axios from 'axios';
 import { RawClient } from './raw-client';
 import { Connection } from './connection';
+import { ArgumentError } from './errors';
 
 export class Client {
-  constructor({baseUrl, email, apiKey, httpClient = null}) {
+  constructor({baseUrl, basicAuth = null, email, apiKey, httpClient = null}) {
     this._baseUrl = baseUrl;
     this._email = email;
     this._apiKey = apiKey;
-    this._httpClient = httpClient ? httpClient : this._buildHttpClient(baseUrl);
+    this._httpClient = httpClient ? httpClient : this._buildHttpClient({baseUrl, basicAuth});
     this._rawClient = new RawClient({
       baseUrl,
       httpClient: this._httpClient
@@ -45,17 +46,19 @@ export class Client {
       .then((connection) => this._get("current_site", connection));
   }
 
-  getContentEntries() {
+  getContentTypes() {
     return this._getConnection()
-      .then((connection) => this._get("content_entries", connection));
+      .then((connection) => this._get("content_types", connection));
   }
 
-  _buildHttpClient(baseUrl) {
-    return axios.create({
+  _buildHttpClient({baseUrl, basicAuth = null}) {
+    const config = {
       baseURL: baseUrl,
       timeout: 2000,
+      auth: basicAuth,
       headers: {'Content-Type': 'application/json'}
-    });
+    }
+    return axios.create(config);
   }
 
   _get(resourceType, connection = null) {

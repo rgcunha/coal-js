@@ -1,0 +1,139 @@
+{
+  "status" : 200,
+  "data": [
+     {
+        "_id":"55b8eedaf70e59aecc01e368",
+        "created_at":"2015-07-29T15:18:50Z",
+        "updated_at":"2017-12-04T11:02:23Z",
+        "name":"Press articles",
+        "slug":"press_articles",
+        "description":"A description of the content type for the editors",
+        "label_field_name":"journal",
+        "order_direction":"desc",
+        "public_submission_enabled":false,
+        "public_submission_accounts":[
+
+        ],
+        "public_submission_title_template":null,
+        "entry_template":null,
+        "display_settings":null,
+        "filter_fields":null,
+        "fields":[
+           {
+              "_id":"55b8eedaf70e59aecc01e369",
+              "created_at":null,
+              "updated_at":null,
+              "name":"journal",
+              "type":"string",
+              "label":"Journal",
+              "hint":"The name of the Journal, newspaper, etc...",
+              "required":true,
+              "localized":false,
+              "unique":false,
+              "default":null,
+              "position":0
+           },
+           {
+              "_id":"55b8eedaf70e59aecc01e36a",
+              "created_at":null,
+              "updated_at":null,
+              "name":"quote",
+              "type":"string",
+              "label":"Quote",
+              "hint":"Quote from the article",
+              "required":false,
+              "localized":true,
+              "unique":false,
+              "default":null,
+              "position":1
+           },
+           {
+              "_id":"55b8eedaf70e59aecc01e36b",
+              "created_at":null,
+              "updated_at":null,
+              "name":"published_at",
+              "type":"date",
+              "label":"Published at",
+              "hint":"the date that article published at",
+              "required":false,
+              "localized":true,
+              "unique":false,
+              "default":null,
+              "position":2
+           },
+           {
+              "_id":"55b8eedaf70e59aecc01e36c",
+              "created_at":null,
+              "updated_at":null,
+              "name":"image",
+              "type":"file",
+              "label":"Image",
+              "hint":"usually the logo of the Journal (Required dimensions - 248x120)",
+              "required":false,
+              "localized":true,
+              "unique":false,
+              "default":null,
+              "position":3
+           }
+        ],
+        "order_by":"published_at",
+        "group_by":null,
+        "public_submission_account_emails":[
+
+        ]
+     },
+     {
+        "_id":"5638c7ec0b89f8aac90006b0",
+        "created_at":"2015-11-03T14:42:52Z",
+        "updated_at":"2016-06-15T12:23:26Z",
+        "name":"Advisory board members",
+        "slug":"advisory_board_members",
+        "description":"People who are shown at the team page (advisory board)",
+        "label_field_name":"full_name",
+        "order_direction":"asc",
+        "public_submission_enabled":false,
+        "public_submission_accounts":[
+
+        ],
+        "public_submission_title_template":null,
+        "entry_template":null,
+        "display_settings":null,
+        "filter_fields":null,
+        "fields":[
+           {
+              "_id":"5638c7ec0b89f8aac90006b1",
+              "created_at":null,
+              "updated_at":null,
+              "name":"full_name",
+              "type":"string",
+              "label":"Full name",
+              "hint":"Title and full name",
+              "required":true,
+              "localized":false,
+              "unique":false,
+              "default":null,
+              "position":0
+           },
+           {
+              "_id":"5638c7ec0b89f8aac90006b2",
+              "created_at":null,
+              "updated_at":null,
+              "name":"position",
+              "type":"string",
+              "label":"Position",
+              "hint":"Position in the company",
+              "required":true,
+              "localized":true,
+              "unique":false,
+              "default":null,
+              "position":1
+           }
+        ],
+        "order_by":"_position",
+        "group_by":null,
+        "public_submission_account_emails":[
+
+        ]
+     }
+  ]
+}

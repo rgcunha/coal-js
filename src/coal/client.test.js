@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 import axios from 'axios';
 import { Client } from './client';
-import { tokens, myAccount, sites, currentSite } from '../../test/fixtures';
+import { tokens, myAccount, sites, currentSite, contentTypes } from '../../test/fixtures';
 
 describe('Client', () => {
   const httpClient = axios.create();
@@ -86,6 +86,23 @@ describe('Client', () => {
               expect(status).to.equal(200);
               expect(data.name).to.equal('My Site');
               expect(data.handle).to.equal('thriving-leaves-5509');
+            })
+            .then(done, done)
+        });
+      });
+
+      describe('getContentTypes()', () => {
+        it('returns all the content types', (done) => {
+          const resolved = new Promise((resolve) => resolve(contentTypes));
+          sandbox.stub(httpClient, 'get').returns(resolved);
+
+          client.getContentTypes()
+            .then((response) => {
+              const { status, data } = response;
+              expect(status).to.equal(200);
+              expect(data).to.be.an("array");
+              expect(data[0].name).to.equal('Press articles');
+              expect(data[0].slug).to.equal('press_articles');
             })
             .then(done, done)
         });
