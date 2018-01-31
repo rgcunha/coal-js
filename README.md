@@ -15,24 +15,37 @@ Client = require('./coal/client.js').Client;
 
 const client = new Client({
   baseUrl: "https://station.locomotive.works/locomotive/api/v3",
-  email: "ruben.cunha@gmail.com",
-  apiKey: "bcc74aeff61f5c6735884a51024db81c882b6ed4"
+  basicAuth: {
+    username: "xxx",
+    password: "xxx"
+  }
+  email: "max.mustermann@gmail.com",
+  apiKey: "a391c1669a73394d5840780fc940c05b1e12c36f"
 });
 
-// get user name
-client.getMyAccount()
-  .then(({data}) => console.log(data.name))
+// get engine version
+client.getEngineVersion().then(({data}) => console.log(data.engine))
 
-// get site name
-client.getSites()
-  .then(({data}) => console.log(data[0].name))
+// get user name
+client.getMyAccount().then(({data}) => console.log(data.name))
+
+// get site handle
+let handle;
+client.getSites().then((response) => handle = response.data[0].handle)
 
 // scope resources by site
-client.scopedBySite('site-handle');
+client.scopedBySite(handle);
 
-// get currentSite
-client.getCurrentSite()
-  .then(({data}) => console.log(data.handle))
+// get current site name
+client.getCurrentSite().then(({data}) => console.log(data.name))
+
+// get content type slug
+let slug;
+client.getContentTypes().then((response) => slug = response.data[0].slug)
+
+// get content type entries
+client.getContentTypeEntries(slug).then((response) => console.log(response.data))
+
 ```
 
 ## NPM Scripts
@@ -60,6 +73,7 @@ npm run build
 ## Roadmap
 
 * [x] POST /tokens.json
+* [x] GET /version.json
 * [x] GET /my_account.json
 * [x] GET /sites.json
 * [ ] POST /sites.json
@@ -70,9 +84,8 @@ npm run build
 * [ ] POST /pages.json
 * [ ] PATCH /pages.json/{id}
 * [ ] DELETE /pages.json/{id}
-* [ ] GET /content_types.json
-* [ ] GET /content_entries.json
-* [ ] GET /content_entries.json/{id}
+* [x] GET /content_types.json
+* [x] GET /content_types/{id}/entries.json
 * [ ] POST /content_entries.json
 * [ ] PATCH /content_entries.json/{id}
 * [ ] DELETE /content_entries.json/{id}
