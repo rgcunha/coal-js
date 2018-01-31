@@ -31,6 +31,11 @@ export class Client {
     return this._create("tokens", data)
   }
 
+  getEngineVersion() {
+    return this._getConnection()
+      .then((connection) => this._get("version", connection));
+  }
+
   getMyAccount() {
     return this._getConnection()
       .then((connection) => this._get("my_account", connection));

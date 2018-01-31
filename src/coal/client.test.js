@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 import axios from 'axios';
 import { Client } from './client';
-import { tokens, myAccount, sites, currentSite, contentTypes, contentTypeEntries } from '../../test/fixtures';
+import { tokens, version, myAccount, sites, currentSite, contentTypes, contentTypeEntries } from '../../test/fixtures';
 
 describe('Client', () => {
   const httpClient = axios.create();
@@ -38,6 +38,21 @@ describe('Client', () => {
       const resolved = new Promise((resolve) => resolve(tokens));
       sandbox.stub(client, 'createToken').returns(resolved);
     })
+
+    describe('getEngineVersion()', () => {
+      it('returns the version of the engine', (done) => {
+        const resolved = new Promise((resolve) => resolve(version));
+        sandbox.stub(httpClient, 'get').returns(resolved);
+
+        client.getMyAccount()
+          .then((response) => {
+            const { status, data } = response;
+            expect(status).to.equal(200);
+            expect(data.engine).to.equal('3.3.0');
+          })
+          .then(done, done)
+      });
+    });
 
     describe('getMyAccount()', () => {
       it('returns the user account', (done) => {
