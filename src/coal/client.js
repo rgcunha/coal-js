@@ -51,6 +51,13 @@ export class Client {
       .then((connection) => this._get("content_types", connection));
   }
 
+  getContentTypeEntries(contentType) {
+    if (!contentType) { throw new ArgumentError("content type must be a string"); }
+    const resourceType = `content_types/${contentType}/entries`;
+    return this._getConnection()
+      .then((connection) => this._get(resourceType, connection));
+  }
+
   _buildHttpClient({baseUrl, basicAuth = null}) {
     const config = {
       baseURL: baseUrl,

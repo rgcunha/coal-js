@@ -1,0 +1,56 @@
+{
+  "status": 200,
+  "data": [
+    {
+      "_id":"5a251d2f8ec9a01a79771f89",
+      "created_at":"2017-12-04T10:02:23Z",
+      "updated_at":"2017-12-04T10:03:32Z",
+      "_slug":"grunderszene-2",
+      "content_type_slug":"press_articles",
+      "_label":"Gründerszene",
+      "_position":52,
+      "_visible":true,
+      "seo_title":"",
+      "meta_keywords":"",
+      "meta_description":"",
+      "journal":"Gründerszene",
+      "quote":"\"Für das weitere Wachstum erhält Deposit Solutions weitere 20 Millionen Dollar\"",
+      "published_at":"2017-12-01",
+      "image":"https://d137ya7j1tpai6.cloudfront.net/sites/5514661e05054a8362000001/content_entry55b8eedaf70e59aecc01e368/5a251d2f8ec9a01a79771f89/files/Gruenderszene.png"
+    },
+    {
+      "_id":"5a2125dbbdfba31b3196db60",
+      "created_at":"2017-12-01T09:50:19Z",
+      "updated_at":"2017-12-01T09:51:56Z",
+      "_slug":"finanz-szene-dot-de",
+      "content_type_slug":"press_articles",
+      "_label":"Finanz-Szene.de",
+      "_position":51,
+      "_visible":true,
+      "seo_title":"",
+      "meta_keywords":"",
+      "meta_description":"",
+      "journal":"Finanz-Szene.de",
+      "quote":"\"Deposit Solutions ist das neue deutsche Super-Fintech\"",
+      "published_at":"2017-12-01",
+      "image":"https://d137ya7j1tpai6.cloudfront.net/sites/5514661e05054a8362000001/content_entry55b8eedaf70e59aecc01e368/5a2125dbbdfba31b3196db60/files/Finanz-Szene.de.png"
+    },
+    {
+      "_id":"59e9b151c259d923c7f65b10",
+      "created_at":"2017-10-20T08:18:25Z",
+      "updated_at":"2017-10-20T08:19:01Z",
+      "_slug":"financial-times-1",
+      "content_type_slug":"press_articles",
+      "_label":"Financial Times",
+      "_position":50,
+      "_visible":true,
+      "seo_title":"",
+      "meta_keywords":"",
+      "meta_description":"",
+      "journal":"Financial Times",
+      "quote":"\"Resourceful fintech start-ups as Savedo help Germans open accounts overseas\"",
+      "published_at":"2017-10-20",
+      "image":"https://d137ya7j1tpai6.cloudfront.net/sites/5514661e05054a8362000001/content_entry55b8eedaf70e59aecc01e368/59e9b151c259d923c7f65b10/files/Financial_Times_corporate_logo.svg.png"
+    }
+  ]
+}

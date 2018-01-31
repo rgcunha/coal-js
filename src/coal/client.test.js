@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 import axios from 'axios';
 import { Client } from './client';
-import { tokens, myAccount, sites, currentSite, contentTypes } from '../../test/fixtures';
+import { tokens, myAccount, sites, currentSite, contentTypes, contentTypeEntries } from '../../test/fixtures';
 
 describe('Client', () => {
   const httpClient = axios.create();
@@ -103,6 +103,23 @@ describe('Client', () => {
               expect(data).to.be.an("array");
               expect(data[0].name).to.equal('Press articles');
               expect(data[0].slug).to.equal('press_articles');
+            })
+            .then(done, done)
+        });
+      });
+
+      describe('getContentTypeEntries()', () => {
+        it('returns all the entries for a content type', (done) => {
+          const resolved = new Promise((resolve) => resolve(contentTypeEntries));
+          sandbox.stub(httpClient, 'get').returns(resolved);
+
+          client.getContentTypeEntries('press_articles')
+            .then((response) => {
+              const { status, data } = response;
+              expect(status).to.equal(200);
+              expect(data).to.be.an("array");
+              expect(data[2].content_type_slug).to.equal('press_articles');
+              expect(data[2]._label).to.equal('Financial Times');
             })
             .then(done, done)
         });
