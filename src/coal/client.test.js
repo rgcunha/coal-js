@@ -18,12 +18,12 @@ describe('Client', () => {
   beforeEach(() => sandbox = sinon.sandbox.create());
   afterEach(() => sandbox.restore());
 
-  describe('createToken()', () => {
+  describe('_createToken()', () => {
     it('returns new token', (done) => {
       const resolved = new Promise((resolve) => resolve(tokens));
       sandbox.stub(httpClient, 'post').returns(resolved);
 
-      client.createToken()
+      client._createToken()
         .then((response) => {
           const { status, data } = response;
           expect(status).to.equal(201);
@@ -33,18 +33,18 @@ describe('Client', () => {
     });
   });
 
-  describe('protected resources', () => {
+  describe('private resources', () => {
     beforeEach(() => {
       const resolved = new Promise((resolve) => resolve(tokens));
-      sandbox.stub(client, 'createToken').returns(resolved);
+      sandbox.stub(client, '_createToken').returns(resolved);
     })
 
-    describe('getEngineVersion()', () => {
+    describe('version().getAll()', () => {
       it('returns the version of the engine', (done) => {
         const resolved = new Promise((resolve) => resolve(version));
         sandbox.stub(httpClient, 'get').returns(resolved);
 
-        client.getMyAccount()
+        client.version().getAll()
           .then((response) => {
             const { status, data } = response;
             expect(status).to.equal(200);
@@ -54,12 +54,12 @@ describe('Client', () => {
       });
     });
 
-    describe('getMyAccount()', () => {
+    describe('myAccount().getAll()', () => {
       it('returns the user account', (done) => {
         const resolved = new Promise((resolve) => resolve(myAccount));
         sandbox.stub(httpClient, 'get').returns(resolved);
 
-        client.getMyAccount()
+        client.myAccount().getAll()
           .then((response) => {
             const { status, data } = response;
             expect(status).to.equal(200);
@@ -70,12 +70,12 @@ describe('Client', () => {
       });
     });
 
-    describe('getSites()', () => {
+    describe('sites().getAll()', () => {
       it('returns all sites', (done) => {
         const resolved = new Promise((resolve) => resolve(sites));
         sandbox.stub(httpClient, 'get').returns(resolved);
 
-        client.getSites()
+        client.sites().getAll()
           .then((response) => {
             const { status, data } = response;
             expect(status).to.equal(200);
@@ -90,12 +90,12 @@ describe('Client', () => {
     describe('scoped by a site handle', () => {
       beforeEach(() => client.scopedBySite('thriving-leaves-5509'));
 
-      describe('getCurrentSite()', () => {
+      describe('currentSite().getAll()', () => {
         it('returns the current site', (done) => {
           const resolved = new Promise((resolve) => resolve(currentSite));
           sandbox.stub(httpClient, 'get').returns(resolved);
 
-          client.getCurrentSite()
+          client.currentSite().getAll()
             .then((response) => {
               const { status, data } = response;
               expect(status).to.equal(200);
@@ -106,12 +106,12 @@ describe('Client', () => {
         });
       });
 
-      describe('getContentTypes()', () => {
+      describe('contentTypes().getAll()', () => {
         it('returns all the content types', (done) => {
           const resolved = new Promise((resolve) => resolve(contentTypes));
           sandbox.stub(httpClient, 'get').returns(resolved);
 
-          client.getContentTypes()
+          client.contentTypes().getAll()
             .then((response) => {
               const { status, data } = response;
               expect(status).to.equal(200);
@@ -123,12 +123,12 @@ describe('Client', () => {
         });
       });
 
-      describe('getContentTypeEntries()', () => {
+      describe('contentEntries().getAll()', () => {
         it('returns all the entries for a content type', (done) => {
           const resolved = new Promise((resolve) => resolve(contentTypeEntries));
           sandbox.stub(httpClient, 'get').returns(resolved);
 
-          client.getContentTypeEntries('press_articles')
+          client.contentEntries('press_articles').getAll()
             .then((response) => {
               const { status, data } = response;
               expect(status).to.equal(200);

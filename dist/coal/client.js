@@ -11,11 +11,11 @@ var _axios = require('axios');
 
 var _axios2 = _interopRequireDefault(_axios);
 
+var _resources = require('./resources');
+
 var _rawClient = require('./raw-client');
 
 var _connection = require('./connection');
-
-var _errors = require('./errors');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -23,6 +23,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var Client = exports.Client = function () {
   function Client(_ref) {
+    var _this = this;
+
     var baseUrl = _ref.baseUrl,
         _ref$basicAuth = _ref.basicAuth,
         basicAuth = _ref$basicAuth === undefined ? null : _ref$basicAuth,
@@ -32,6 +34,34 @@ var Client = exports.Client = function () {
         httpClient = _ref$httpClient === undefined ? null : _ref$httpClient;
 
     _classCallCheck(this, Client);
+
+    this._getConnection = function () {
+      if (_this._connection) {
+        return new Promise(function (resolve) {
+          return resolve(_this._connection);
+        });
+      }
+      return _this._createConnection();
+    };
+
+    this._createConnection = function () {
+      return _this._createToken().then(function (_ref2) {
+        var data = _ref2.data;
+        return _this._connection = new _connection.Connection({
+          email: _this._email,
+          token: data.token,
+          handle: _this._siteHandle
+        });
+      });
+    };
+
+    this._createToken = function () {
+      var _email = _this._email,
+          _apiKey = _this._apiKey;
+
+      var data = { email: _email, api_key: _apiKey };
+      return _this.token().create(data);
+    };
 
     this._baseUrl = baseUrl;
     this._email = email;
@@ -55,78 +85,50 @@ var Client = exports.Client = function () {
       return this;
     }
   }, {
-    key: 'createToken',
-    value: function createToken() {
-      var _email = this._email,
-          _apiKey = this._apiKey;
-
-      var data = { email: _email, api_key: _apiKey };
-      return this._create("tokens", data);
+    key: 'token',
+    value: function token() {
+      return this._token = new _resources.Token({ rawClient: this._rawClient });
     }
   }, {
-    key: 'getEngineVersion',
-    value: function getEngineVersion() {
-      var _this = this;
-
-      return this._getConnection().then(function (connection) {
-        return _this._get("version", connection);
-      });
+    key: 'version',
+    value: function version() {
+      return this._version = new _resources.Version({ rawClient: this._rawClient, connect: this._getConnection });
     }
   }, {
-    key: 'getMyAccount',
-    value: function getMyAccount() {
-      var _this2 = this;
-
-      return this._getConnection().then(function (connection) {
-        return _this2._get("my_account", connection);
-      });
+    key: 'myAccount',
+    value: function myAccount() {
+      return this._myAccount = new _resources.MyAccount({ rawClient: this._rawClient, connect: this._getConnection });
     }
   }, {
-    key: 'getSites',
-    value: function getSites() {
-      var _this3 = this;
-
-      return this._getConnection().then(function (connection) {
-        return _this3._get("sites", connection);
-      });
+    key: 'sites',
+    value: function sites() {
+      return this._sites = new _resources.Sites({ rawClient: this._rawClient, connect: this._getConnection });
     }
   }, {
-    key: 'getCurrentSite',
-    value: function getCurrentSite() {
-      var _this4 = this;
-
-      return this._getConnection().then(function (connection) {
-        return _this4._get("current_site", connection);
-      });
+    key: 'currentSite',
+    value: function currentSite() {
+      return this._currentSite = new _resources.CurrentSite({ rawClient: this._rawClient, connect: this._getConnection });
     }
   }, {
-    key: 'getContentTypes',
-    value: function getContentTypes() {
-      var _this5 = this;
-
-      return this._getConnection().then(function (connection) {
-        return _this5._get("content_types", connection);
-      });
+    key: 'contentTypes',
+    value: function contentTypes() {
+      return this._contentTypes = new _resources.ContentTypes({ rawClient: this._rawClient, connect: this._getConnection });
     }
   }, {
-    key: 'getContentTypeEntries',
-    value: function getContentTypeEntries(contentType) {
-      var _this6 = this;
-
-      if (!contentType) {
-        throw new _errors.ArgumentError("content type must be a string");
-      }
-      var resourceType = 'content_types/' + contentType + '/entries';
-      return this._getConnection().then(function (connection) {
-        return _this6._get(resourceType, connection);
+    key: 'contentEntries',
+    value: function contentEntries(contentType) {
+      return this._contentEntries = new _resources.ContentEntries({
+        rawClient: this._rawClient,
+        connect: this._getConnection,
+        contentType: contentType
       });
     }
   }, {
     key: '_buildHttpClient',
-    value: function _buildHttpClient(_ref2) {
-      var baseUrl = _ref2.baseUrl,
-          _ref2$basicAuth = _ref2.basicAuth,
-          basicAuth = _ref2$basicAuth === undefined ? null : _ref2$basicAuth;
+    value: function _buildHttpClient(_ref3) {
+      var baseUrl = _ref3.baseUrl,
+          _ref3$basicAuth = _ref3.basicAuth,
+          basicAuth = _ref3$basicAuth === undefined ? null : _ref3$basicAuth;
 
       var config = {
         baseURL: baseUrl,
@@ -135,59 +137,6 @@ var Client = exports.Client = function () {
         headers: { 'Content-Type': 'application/json' }
       };
       return _axios2.default.create(config);
-    }
-  }, {
-    key: '_get',
-    value: function _get(resourceType) {
-      var connection = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-
-      var path = this._buildPath(resourceType);
-      return this._rawClient.get(path, connection);
-    }
-  }, {
-    key: '_create',
-    value: function _create(resourceType, data) {
-      var connection = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
-
-      var path = this._buildPath(resourceType);
-      return this._rawClient.create(path, data, connection);
-    }
-  }, {
-    key: '_buildPath',
-    value: function _buildPath(resourceType) {
-      var id = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-
-      var path = resourceType + '.json';
-      if (id) {
-        path += '/' + id;
-      }
-      return path;
-    }
-  }, {
-    key: '_getConnection',
-    value: function _getConnection() {
-      var _this7 = this;
-
-      if (this._connection) {
-        return new Promise(function (resolve) {
-          return resolve(_this7._connection);
-        });
-      }
-      return this._createConnection();
-    }
-  }, {
-    key: '_createConnection',
-    value: function _createConnection() {
-      var _this8 = this;
-
-      return this.createToken().then(function (_ref3) {
-        var data = _ref3.data;
-        return _this8._connection = new _connection.Connection({
-          email: _this8._email,
-          token: data.token,
-          handle: _this8._siteHandle
-        });
-      });
     }
   }]);
 

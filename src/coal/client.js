@@ -1,7 +1,7 @@
 import axios from 'axios';
+import { Token, Version, MyAccount, Sites, CurrentSite, ContentTypes, ContentEntries } from './resources';
 import { RawClient } from './raw-client';
 import { Connection } from './connection';
-import { ArgumentError } from './errors';
 
 export class Client {
   constructor({baseUrl, basicAuth = null, email, apiKey, httpClient = null}) {
@@ -25,42 +25,36 @@ export class Client {
     return this;
   }
 
-  createToken() {
-    const { _email, _apiKey } = this;
-    const data = { email: _email, api_key: _apiKey };
-    return this._create("tokens", data)
+  token() {
+    return this._token = new Token({rawClient: this._rawClient});
   }
 
-  getEngineVersion() {
-    return this._getConnection()
-      .then((connection) => this._get("version", connection));
+  version() {
+    return this._version = new Version({rawClient: this._rawClient, connect: this._getConnection})
   }
 
-  getMyAccount() {
-    return this._getConnection()
-      .then((connection) => this._get("my_account", connection));
+  myAccount() {
+    return this._myAccount = new MyAccount({rawClient: this._rawClient, connect: this._getConnection})
   }
 
-  getSites() {
-    return this._getConnection()
-      .then((connection) => this._get("sites", connection));
+  sites() {
+    return this._sites = new Sites({rawClient: this._rawClient, connect: this._getConnection})
   }
 
-  getCurrentSite() {
-    return this._getConnection()
-      .then((connection) => this._get("current_site", connection));
+  currentSite() {
+    return this._currentSite = new CurrentSite({rawClient: this._rawClient, connect: this._getConnection})
   }
 
-  getContentTypes() {
-    return this._getConnection()
-      .then((connection) => this._get("content_types", connection));
+  contentTypes() {
+    return this._contentTypes = new ContentTypes({rawClient: this._rawClient, connect: this._getConnection})
   }
 
-  getContentTypeEntries(contentType) {
-    if (!contentType) { throw new ArgumentError("content type must be a string"); }
-    const resourceType = `content_types/${contentType}/entries`;
-    return this._getConnection()
-      .then((connection) => this._get(resourceType, connection));
+  contentEntries(contentType) {
+    return this._contentEntries = new ContentEntries({
+      rawClient: this._rawClient,
+      connect: this._getConnection,
+      contentType
+    })
   }
 
   _buildHttpClient({baseUrl, basicAuth = null}) {
@@ -73,35 +67,25 @@ export class Client {
     return axios.create(config);
   }
 
-  _get(resourceType, connection = null) {
-    const path = this._buildPath(resourceType);
-    return this._rawClient.get(path, connection);
-  }
-
-  _create(resourceType, data, connection = null) {
-    const path = this._buildPath(resourceType);
-    return this._rawClient.create(path, data, connection);
-  }
-
-  _buildPath(resourceType, id = null) {
-    let path = `${resourceType}.json`;
-    if (id) { path +=`/${id}` }
-    return path;
-  }
-
-  _getConnection() {
+  _getConnection = () => {
     if (this._connection) {
       return new Promise((resolve) => resolve(this._connection));
     }
     return this._createConnection();
   }
 
-  _createConnection() {
-    return this.createToken()
+  _createConnection = () => {
+    return this._createToken()
       .then(({data}) => this._connection = new Connection({
         email: this._email,
         token: data.token,
         handle: this._siteHandle
       }));
+  }
+
+  _createToken = () => {
+    const { _email, _apiKey } = this;
+    const data = { email: _email, api_key: _apiKey };
+    return this.token().create(data);
   }
 }
