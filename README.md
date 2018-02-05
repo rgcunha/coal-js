@@ -18,33 +18,39 @@ const client = new Client({
   basicAuth: {
     username: "xxx",
     password: "xxx"
-  }
+  },
   email: "max.mustermann@gmail.com",
   apiKey: "a391c1669a73394d5840780fc940c05b1e12c36f"
 });
 
 // get engine version
-client.getEngineVersion().then(({data}) => console.log(data.engine))
+client.version().getAll()
+  .then(({data}) => console.log(data.engine))
 
 // get user name
-client.getMyAccount().then(({data}) => console.log(data.name))
+client.myAccount().getAll()
+  .then(({data}) => console.log(data.name))
 
 // get site handle
 let handle;
-client.getSites().then((response) => handle = response.data[0].handle)
+client.sites().getAll()
+  .then((response) => handle = response.data[0].handle)
 
 // scope resources by site
 client.scopedBySite(handle);
 
 // get current site name
-client.getCurrentSite().then(({data}) => console.log(data.name))
+client.currentSite().getAll()
+  .then(({data}) => console.log(data.name))
 
 // get content type slug
-let slug;
-client.getContentTypes().then((response) => slug = response.data[0].slug)
+let contentTypeSlug;
+client.contentTypes().getAll()
+  .then((response) => contentTypeSlug = response.data[0].slug)
 
 // get content type entries
-client.getContentTypeEntries(slug).then((response) => console.log(response.data))
+client.contentEntries(contentTypeSlug).getAll()
+  .then((response) => console.log(response.data))
 
 ```
 
@@ -60,10 +66,10 @@ npm run test
 # run one single test
 npm run test:single ./src/coal/client.test.js
 
-# run tests and watches for file changes
+# run tests and watch for file changes
 npm run dev
 
-# run tests and launch node-inspector to debug with chrome-devtools (https://medium.com/@paul_irish/debugging-node-js-nightlies-with-chrome-devtools-7c4a1b95ae27)
+# run tests and launch node-inspector to debug with chrome-devtools
 npm run debug
 
 # build dist for production (ES5)
